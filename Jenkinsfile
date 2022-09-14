@@ -13,7 +13,7 @@ pipeline {
   stages {
     stage('Generate User Data') {
       steps {
-        sh "python3 getusers.py --url ${params.API_URL}"
+        sh "python3 generateDevOpsUserData.py --url ${params.API_URL}"
       }
     }
     stage('Test'){
