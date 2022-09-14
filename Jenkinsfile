@@ -1,3 +1,7 @@
+/*
+  Pipeline to get DevOps user data
+  Ideal to be used as a MultiBranch Pipeline
+*/
 pipeline {
   agent any
   environment {
@@ -14,6 +18,7 @@ pipeline {
     stage('Generate User Data') {
       steps {
         sh "python3 generateDevOpsUserData.py --url ${params.API_URL}"
+        sh "zip devops-user-data-docs.zip -r devops-user-data*"
       }
     }
     stage('Test'){
@@ -24,10 +29,13 @@ pipeline {
       }
     }
     stage('Deploy') {
+      when {
+        expression { env.BRANCH_NAME == 'main' }
+      }
       steps {
         sh """
-          zip devops-user-data-docs.zip -r devops-user-data*
-          curl -u ${env.ARTIFACTORY_CREDS} -XPUT "https://codingchallenge.jfrog.io/artifactory/coding-challenge/${currentBuild.number}/" -T devops-user-data-docs.zip
+          curl -u ${env.ARTIFACTORY_CREDS} -XPUT "https://codingchallenge.jfrog.io/artifactory/coding-challenge/${currentBuild.number}/docs" -T devops-user-data-docs.zip
+          curl -u ${env.ARTIFACTORY_CREDS} -XPUT "https://codingchallenge.jfrog.io/artifactory/coding-challenge/${currentBuild.number}/test" -T htmlcov/index.html
         """
       }
     }
