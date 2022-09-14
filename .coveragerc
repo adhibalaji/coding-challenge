@@ -1,0 +1,13 @@
+[report]
+skip_empty = true
+omit =
+    # omit anything in a .local directory anywhere
+    */.local/*
+    */__init__.py
+    venv/*
+    */.pytest_cache/*
+    */__pycache__/*
+    /usr/*
+exclude_lines =
+    if __name__ == "__main__":
+    if __name__ == '__main__':
