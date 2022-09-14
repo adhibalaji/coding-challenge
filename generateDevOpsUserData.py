@@ -5,6 +5,7 @@ import requests
 import xlsxwriter
 
 def get_user_data(url):
+  """Function to get user data for a provided URL"""
   response = requests.get(url)
   if response.status_code != 200:
     raise RuntimeError("API call to '{}' returned '{}' with status code: '{}'".format(url, response.text, response.status_code))
@@ -18,7 +19,8 @@ def get_user_data(url):
   return user_data
 
 def generate_excel(data):
-  workbook = xlsxwriter.Workbook('demo.xlsx')
+  """Function to generate a excel doc based on provided data list of lists"""
+  workbook = xlsxwriter.Workbook('devops-user-data.xlsx')
   worksheet = workbook.add_worksheet()
   caption = 'Table with details of all users in the DevOps platform'
 
@@ -34,17 +36,21 @@ def generate_excel(data):
   workbook.close()
 
 def generate_html(data):
-  content=""
+  """Function to generate a html doc based on provided data list of lists"""
+  content = ""
   for i in range(len(data)):
-    content=content + "<tr><td>" + '</td><td>'.join(data[i]) + "</td></tr>"
+    content = content + "<tr><td>" + '</td><td>'.join(data[i]) + "</td></tr>"
 
-  f= open("users.html","w+")
+  fp = open("devops-user-data.html","w+")
 
-  f.write("<!DOCTYPE html><html><head><style>table, th, td { border: 1px solid black; }</style></head><body><h1>DevOps User Data</h1>")
-  f.write("<table><tr><th>First Name</th><th>Last Name</th><th>Email</th></tr>")
-  f.write("%s</table></body></html>" %content)
+  # Write the table border styling for the html doc
+  fp.write("<!DOCTYPE html><html><head><style>table, th, td { border: 1px solid black; }</style></head><body><h1>DevOps User Data</h1>")
+  # Write the header
+  fp.write("<table><tr><th>First Name</th><th>Last Name</th><th>Email</th></tr>")
+  # Write the dynamic body of the doc
+  fp.write("%s</table></body></html>" %content)
 
-  f.close()
+  fp.close()
 
 parser = argparse.ArgumentParser(description='Get User data from a API url and generate doc')
 parser.add_argument(
